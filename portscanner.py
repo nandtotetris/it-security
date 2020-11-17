@@ -42,7 +42,7 @@ def tcp_scan(port):
     try:
         con = s.connect((host, port))
         with print_lock:
-            print(str(port) +'/tcp\t' + 'open\t\t' + getPortService(port, 'tcp'))
+            print('%-15s%-15s%-15s' % (str(port) +'/tcp', 'open', getPortService(port, 'tcp')))
     except:
         pass
 
@@ -72,8 +72,9 @@ if __name__ == '__main__':
         q.put(p)
     
     print('Scan started at %s\n'%(now()))
-    print('PORT\t\tSTATE\t\tSERVICE')
-    print('---------------------------------------')
+    print('%-15s%-15s%-15s' % ('PORT', 'STATE', 'SERVICE'))
+    print('%-15s%-15s%-15s' % ('----', '-----', '-------'))
+
     start_time = time()
     
     q.join()
