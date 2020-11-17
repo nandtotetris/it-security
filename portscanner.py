@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description ='A simple port scanner. If no ' +
 ' If either range or min and max are not provided, only well known tcp ports will ' +
 'be scanned')
 
-parser.add_argument('--host', type=str, nargs=1, default='127.0.0.1',
+parser.add_argument('--host', type=str, default='127.0.0.1',
     help='The HOST/ip-address to scan e.g: 127.0.0.1, defaults to localhost'
 )
 parser.add_argument('--min', type=int, help='scan ports above this MIN value')
