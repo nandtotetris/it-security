@@ -1,4 +1,4 @@
-import threading, socket, sys
+import threading, socket
 from queue import Queue
 from datetime import datetime
 from time import time
@@ -40,7 +40,7 @@ def getPortService(port, protocol):
 def tcp_scan(port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        con = s.connect((host, port))
+        s.connect((host, port))
         with print_lock:
             print('%-15s%-15s%-15s' % (str(port) +'/tcp', 'open', getPortService(port, 'tcp')))
     except:
@@ -48,8 +48,8 @@ def tcp_scan(port):
 
 def tcp_threader():
     while True:
-        worker = q.get()
-        tcp_scan(worker)
+        port = q.get()
+        tcp_scan(port)
         q.task_done()
 
 
