@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(description ='A simple port scanner. If no ' +
 parser.add_argument('--host', type=str, default='127.0.0.1',
     help='The HOST/ip-address to scan e.g: 127.0.0.1, defaults to localhost'
 )
+parser.add_argument('--type', type=str, default='tcp', help='scan type eg: UDP, defaults to TCP')
 parser.add_argument('--min', type=int, help='scan ports above this MIN value')
 parser.add_argument('--max', type=int, help='scan ports below this MAX value')
 parser.add_argument('--range', type=int, nargs=2, default=[], metavar=('MIN', 'MAX'),
@@ -21,6 +22,7 @@ parser.add_argument('--range', type=int, nargs=2, default=[], metavar=('MIN', 'M
 args = parser.parse_args()
 
 host = args.host
+s_type = args.type
 port_range = [args.min, args.max]  if args.min and args.max else args.range
 
 print_lock = threading.Lock()
@@ -51,6 +53,21 @@ def tcp_threader():
         port = q.get()
         tcp_scan(port)
         q.task_done()
+        
+def udp_scan(port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.sendto('invalid request', (host, port))
+        with print_lock:
+            print('%-15s%-15s%-15s' % (str(port) +'/udp', 'open | filtered', getPortService(port, 'udp')))
+    except:
+        pass
+
+def udp_threader():
+    while True:
+        port = q.get()
+        udp_scan(port)
+        q.task_done()
 
 
 if __name__ == '__main__':
@@ -64,7 +81,7 @@ if __name__ == '__main__':
     q = Queue()
 
     for x in range(20):
-        t = threading.Thread(target=tcp_threader)
+        t = threading.Thread(target=tcp_threader) if s_type == 'tcp' else threading.Thread(target=udp_threader)
         t.daemon = True
         t.start()
 
